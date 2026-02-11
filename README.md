@@ -228,15 +228,6 @@ Each skill includes comprehensive documentation:
 - **EXAMPLES.md** (where applicable) - Implementation examples and scripts
 - **TEMPLATES.md** (where applicable) - Templates and formatting guides
 
-## Contributing
-
-Contributions are welcome! If you have improvements or new skills for SWI-Prolog development:
-
-1. Fork this repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
 ## License
 
 MIT License - See [LICENSE](LICENSE) file for details.
