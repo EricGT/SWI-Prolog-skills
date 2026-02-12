@@ -38,6 +38,10 @@ PREFIX: Brief description of change
 
 ## Pre-PR Checklist
 
+**⚠️ CRITICAL: Fork Must Exist Before Creating PR**
+
+If you get an error like `fatal: repository 'https://github.com/EricGT/<package>.git/' not found`, the GitHub fork doesn't exist yet. See the **Fork Setup** section in the `/swipl-git-workflow` skill for instructions on creating the fork.
+
 **CRITICAL: Always verify branch contents against `upstream/master`, NOT local `master`.**
 
 Before creating a PR, run these verification commands in Git Bash:
@@ -212,3 +216,16 @@ Touch OUTPUT files on MSVC to satisfy MSBuild's requirement that custom command 
 ```
 
 **Note:** No Co-Authored-By or other trailing metadata in commit messages.
+
+## Troubleshooting
+
+### Fork Not Found Error
+
+**Error:**
+```
+fatal: repository 'https://github.com/EricGT/<package>.git/' not found
+```
+
+**Cause:** The GitHub fork for this package doesn't exist yet.
+
+**Solution:** Refer to the **Fork Setup** section in `/swipl-git-workflow` skill for detailed instructions on creating the fork before attempting to push or create a PR.

@@ -32,8 +32,11 @@ The following packages are forked and accept PRs:
 - `packages/semweb` → packages-semweb
 - `packages/xpce` → packages-xpce
 - `packages/libedit/libedit` → winlibedit (nested submodule)
+- `debian` → distro-debian
 
 All other packages use upstream URLs only (no fork).
+
+**Note:** All forked packages require GitHub forks to exist before pushing to `origin`. See [Fork Setup](#fork-setup) section below.
 
 ## Operation Details
 
@@ -135,6 +138,16 @@ git diff upstream/master..HEAD -- .gitignore **/.gitignore
 - Semweb: `SWI-Prolog/packages-semweb` ← `EricGT/packages-semweb`
 - XPCE: `SWI-Prolog/packages-xpce` ← `EricGT/packages-xpce`
 - Winlibedit: `SWI-Prolog/winlibedit` ← `EricGT/winlibedit`
+- Debian: `SWI-Prolog/distro-debian` ← `EricGT/distro-debian`
+
+**⚠️ Fork Missing Error:**
+
+If you encounter errors like:
+```
+fatal: repository 'https://github.com/EricGT/<package>.git/' not found
+```
+
+This means the GitHub fork doesn't exist yet. See [Fork Setup](#fork-setup) section below.
 
 ### Sync with Upstream (`sync`)
 
@@ -342,6 +355,69 @@ git checkout master
 /swipl-git-workflow sync all
 ```
 
+## Fork Setup
+
+**IMPORTANT:** Before you can push to `origin` or create a PR for a forked package, the GitHub fork must exist.
+
+### Error: Repository Not Found
+
+If you see:
+```
+fatal: repository 'https://github.com/EricGT/<package>.git/' not found
+```
+
+The fork doesn't exist on GitHub yet. Complete the steps below.
+
+### Creating a Fork
+
+For each forked package, you need to create a GitHub fork:
+
+1. **Go to the upstream repository:**
+   - Main: https://github.com/SWI-Prolog/swipl-devel
+   - BDB: https://github.com/SWI-Prolog/packages-bdb
+   - Clib: https://github.com/SWI-Prolog/packages-clib
+   - Cpp: https://github.com/SWI-Prolog/packages-cpp
+   - JPL: https://github.com/SWI-Prolog/packages-jpl
+   - Libedit: https://github.com/SWI-Prolog/packages-libedit
+   - NLP: https://github.com/SWI-Prolog/packages-nlp
+   - Pcre: https://github.com/SWI-Prolog/packages-pcre
+   - Semweb: https://github.com/SWI-Prolog/packages-semweb
+   - XPCE: https://github.com/SWI-Prolog/packages-xpce
+   - Winlibedit: https://github.com/SWI-Prolog/winlibedit
+   - Debian: https://github.com/SWI-Prolog/distro-debian
+
+2. **Click the "Fork" button** (top right corner)
+
+3. **Wait for the fork to be created** at `https://github.com/EricGT/<package>`
+
+4. **Test the remote connection:**
+   ```bash
+   cd /c/dev-MSVC-PR/swipl-devel/<path-to-package>
+   git push origin master
+   ```
+
+If the push succeeds (or shows "Everything up-to-date"), the fork is ready!
+
+### Verifying Fork Setup
+
+To verify a fork is properly configured with remotes:
+
+```bash
+cd /c/dev-MSVC-PR/swipl-devel/<path-to-package>
+git remote -v
+```
+
+Expected output:
+```
+origin    https://github.com/EricGT/<package>.git (fetch)
+origin    https://github.com/EricGT/<package>.git (push)
+upstream  https://github.com/SWI-Prolog/<package>.git (fetch)
+upstream  https://github.com/SWI-Prolog/<package>.git (push)
+```
+
+- `origin` should point to your fork (EricGT/*)
+- `upstream` should point to official repository (SWI-Prolog/*)
+
 ## Notes
 
 - Always use Git Bash for path consistency: `/c/dev-MSVC-PR/swipl-devel`
@@ -351,3 +427,4 @@ git checkout master
 - PR body formatting uses `/swipl-pr-messages` skill
 - `.gitignore` changes trigger a warning before PR creation
 - Use `--force-with-lease` (not `--force`) when force-pushing after rebase
+- **IMPORTANT:** All forked packages require GitHub forks to exist - see [Fork Setup](#fork-setup) section
