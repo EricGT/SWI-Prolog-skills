@@ -96,9 +96,32 @@ Creates a PR from your fork to upstream SWI-Prolog repository.
 **Actions:**
 1. Detect current location and package
 2. Verify branch is pushed to origin
-3. Check for `.gitignore` changes (warn if present)
+3. **Run pre-PR verification** (see Verification section below)
 4. Use `/swipl-pr-messages` skill to generate PR title and body
 5. Create PR using `gh pr create --repo SWI-Prolog/<package> --head EricGT:<branch>`
+
+**Pre-PR Verification (MANDATORY):**
+
+Before creating PR, **ALWAYS** run these checks against `upstream/master`:
+
+```bash
+# 1. Check all commits in branch
+git log upstream/master..HEAD --oneline
+
+# 2. Check all changed files
+git diff upstream/master..HEAD --name-only
+
+# 3. Verify no .gitignore changes (unless intended)
+git diff upstream/master..HEAD -- .gitignore **/.gitignore
+```
+
+**Expected results:**
+- Only commits related to your PR
+- No merge commits
+- Only files you intended to change
+- No `.gitignore` unless intentional
+
+**If verification fails:** Create a clean branch using cherry-pick (see Recovery section).
 
 **Repository Mapping:**
 - Main: `SWI-Prolog/swipl-devel` ← `EricGT/swipl-devel`
@@ -213,6 +236,70 @@ To test multiple independent fixes together without affecting PR history:
 5. Delete integration branch after testing: `git branch -D test-all-fixes-20260211`
 
 **Note:** Using `merge` here is OK because this integration branch is never pushed or used for PRs. It's purely for local testing.
+
+## Recovery: Creating Clean Branches
+
+If pre-PR verification reveals unwanted commits or files (e.g., `.gitignore` changes, merge commits):
+
+### Problem: Branch Contains Unwanted Commits
+
+**Symptoms:**
+- `git log upstream/master..HEAD` shows extra commits (merge commits, unrelated changes)
+- `git diff upstream/master..HEAD --name-only` shows unwanted files
+
+**Solution: Cherry-pick to Clean Branch**
+
+```bash
+# 1. Identify commits you WANT to keep
+git log upstream/master..HEAD --oneline
+# Example output:
+#   abc1234 BUILD: Fix MSVC warnings  ← KEEP THIS
+#   def5678 Ignore Claude Code files  ← UNWANTED
+
+# 2. Create clean branch from upstream/master
+git checkout upstream/master
+git checkout -b <feature-name>-clean
+
+# 3. Cherry-pick only wanted commits
+git cherry-pick abc1234
+
+# 4. Verify clean branch
+git log upstream/master..HEAD --oneline  # Should show only wanted commits
+git diff upstream/master..HEAD --name-only  # Should show only intended files
+
+# 5. Push clean branch
+git push origin <feature-name>-clean
+
+# 6. Create PR with clean branch
+gh pr create --repo SWI-Prolog/<package> --head EricGT:<feature-name>-clean ...
+```
+
+### Problem: Local `master` Out of Sync
+
+**Symptom:** Comparing against local `master` shows different results than `upstream/master`
+
+**Why it happens:**
+- Local `master` may have uncommitted changes
+- Local `master` may have commits from other branches
+- Local `master` may be behind or ahead of `upstream/master`
+
+**Solution:** Always compare against `upstream/master`:
+
+```bash
+# ❌ WRONG - compares against local master
+git diff master..HEAD --name-only
+
+# ✅ CORRECT - compares against upstream
+git diff upstream/master..HEAD --name-only
+```
+
+**Update local master if needed:**
+```bash
+git checkout master
+git fetch upstream
+git reset --hard upstream/master
+git push origin master --force-with-lease
+```
 
 ## Common Workflows
 

@@ -38,25 +38,102 @@ PREFIX: Brief description of change
 
 ## Pre-PR Checklist
 
-Before creating a PR, check the diff for `.gitignore` file changes:
+**CRITICAL: Always verify branch contents against `upstream/master`, NOT local `master`.**
 
-1. Run `git diff <base>..HEAD -- .gitignore **/.gitignore` (or inspect the staged/committed changes) to see if any `.gitignore` files are modified.
-2. If `.gitignore` changes are present, **stop and ask the user** whether the `.gitignore` change should be included in the PR. Show them the specific `.gitignore` diff so they can decide.
-3. If the user says to remove it, unstage or revert the `.gitignore` change before creating the PR (e.g., `git checkout <base> -- .gitignore` and amend/recommit).
+Before creating a PR, run these verification commands in Git Bash:
 
-This prevents accidentally sending local `.gitignore` preferences upstream.
+### 1. Check All Commits in Branch
+
+```bash
+git log upstream/master..HEAD --oneline
+```
+
+**What to look for:**
+- Only commits related to your PR should be listed
+- No merge commits like "Merge remote-tracking branch 'upstream/master'"
+- No unrelated commits (e.g., `.gitignore` changes, other fixes)
+
+**If you see extra commits:** The branch is polluted. Create a clean branch (see Recovery section below).
+
+### 2. Check All Changed Files
+
+```bash
+git diff upstream/master..HEAD --name-only
+```
+
+**What to look for:**
+- Only files you intended to change should be listed
+- No `.gitignore` files unless explicitly part of your PR
+- No unrelated files
+
+**If you see extra files:** The branch contains unintended changes. Create a clean branch.
+
+### 3. Verify No .gitignore Changes (Unless Intended)
+
+```bash
+git diff upstream/master..HEAD -- .gitignore **/.gitignore
+```
+
+**Expected result:** No output (unless `.gitignore` changes are intentionally part of your PR)
+
+**If output appears:** Ask user if `.gitignore` should be in the PR. If no, create a clean branch.
+
+### Recovery: Creating a Clean Branch
+
+If verification fails (extra commits or files detected):
+
+```bash
+# Identify the commit(s) you want to keep
+git log upstream/master..HEAD --oneline
+
+# Create clean branch from upstream/master
+git checkout upstream/master
+git checkout -b <feature-name>-clean
+
+# Cherry-pick only your intended commits
+git cherry-pick <commit-hash>  # repeat for each wanted commit
+
+# Verify the clean branch
+git diff upstream/master..HEAD --name-only
+
+# Push clean branch
+git push origin <feature-name>-clean
+```
+
+### Why Compare Against `upstream/master`?
+
+- ✅ **Correct:** `git diff upstream/master..HEAD` - shows what GitHub will show in your PR
+- ❌ **Wrong:** `git diff master..HEAD` - local master may be out of sync or contain local changes
+
+Local `master` may have:
+- Uncommitted local changes
+- Commits from other branches you merged
+- Out-of-date state (not synced with upstream)
+
+**Always use `upstream/master` as your comparison base for PRs.**
 
 ## Body Formats
 
-**See [TEMPLATES.md](TEMPLATES.md) for detailed templates by category.**
+**IMPORTANT: Keep PR bodies concise - maximum 2 lines, preferably 1 line.**
 
-### Minimal Body
+### Preferred: One-line Body
 
-For self-explanatory changes, the body can be brief or reference external discussion:
+For most changes, a single line explaining what was changed:
 
 ```markdown
-Brief explanation of what was changed and why.
+Modified add_swipl_target() in cmake/QLF.cmake to touch OUTPUT files on MSVC.
 ```
+
+### Maximum: Two-line Body
+
+Only when absolutely necessary:
+
+```markdown
+Modified add_swipl_target() in cmake/QLF.cmake to touch OUTPUT files on MSVC.
+This satisfies MSBuild's requirement that custom command outputs must exist.
+```
+
+### Exception: External Reference
 
 Or just link to discussion:
 
@@ -64,93 +141,41 @@ Or just link to discussion:
 See discussion: https://swi-prolog.discourse.group/t/topic-slug/1234
 ```
 
-### Structured Body
-
-For complex changes, use sections:
-
-```markdown
-## Problem
-
-Brief description of the issue being fixed.
-
-## Solution
-
-- What was changed
-- Why this approach was chosen
-
-## Testing
-
-- How it was tested
-- Which platforms/configurations
-
-## Related
-
-Link to related issues, PRs, or Discourse discussions.
-```
-
-## Real Examples from SWI-Prolog
+## Examples (Brief Format)
 
 ### FIXED: Bug Fix
 
 **Title:** `FIXED: crypt/2 on Windows using bsd-crypt.c: possible memory corruption`
 
-**Body:** (minimal - self-explanatory from title)
+**Body:** (empty - self-explanatory from title)
 
 ### ADDED: New Feature
 
 **Title:** `ADDED: process_create/3: specify program as prolog(Tool)`
 
-**Body:**
-```markdown
-This allows Prolog running one of its tools, with the guarantee that we
-use the tools from the same version. This provides a hook prolog:prolog_tool/4
-that allows embedded systems to redefine how the Prolog tools should be
-executed.
-```
+**Body:** `Allows Prolog to run its tools from the same version via prolog:prolog_tool/4 hook.`
 
 ### ENHANCED: Improvement
 
 **Title:** `ENHANCED: Make rewrite_host/3 hook work for tcp_connect/3`
 
-**Body:**
-```markdown
-Also allows tcp_connect/3 to accept an IP number. These two enhancements
-avoid the need to lookup `localhost` on Windows.
-```
-
-### MODIFIED: Behavior Change
-
-**Title:** `MODIFIED: library(uri) to raise more exceptions and support URNs`
-
-**Body:** (empty - change is clear from title)
+**Body:** `Also allows tcp_connect/3 to accept IP numbers, avoiding localhost lookup on Windows.`
 
 ### PORT: Portability
 
 **Title:** `PORT: Ensure default 4Mb C-stack on Windows`
 
-**Body:**
-```markdown
-Otherwise the default is 2Mb for MinGW and 1Mb for MSVC
-```
+**Body:** `Otherwise the default is 2Mb for MinGW and 1Mb for MSVC.`
+
+### BUILD: Build System
+
+**Title:** `BUILD: Fix MSVC MSB8065 warnings for custom build outputs`
+
+**Body:** `Touch OUTPUT files on MSVC to satisfy MSBuild's requirement.`
 
 ### DOC: Documentation
 
 **Title:** `DOC: thread_property/2 did not document the debug property`
-
-**Body:** (empty)
-
-### CLEANUP: Code Cleanup
-
-**Title:** `CLEANUP: Use unsigned integers for bitmaps`
-
-**Body:**
-```markdown
-Avoids undefined shifts and makes the code more readable.
-```
-
-### BUILD: Build System
-
-**Title:** `BUILD: replace CMake deprecated exec_program() with execute_process()`
 
 **Body:** (empty)
 
@@ -170,20 +195,20 @@ See build log: www.stats.ox.ac.uk/pub/bdr/M1-SAN/rswipl/00check.log
 
 ## Commit Message Format
 
-When the PR has a single commit, the commit message should align with the PR:
+**CRITICAL: Commit messages must be maximum 2 lines total (title + 1 description line).**
 
-**Headline:** Brief description (may omit prefix)
-**Body:** Detailed technical explanation
-
+**Format:**
 ```
-Fix missing semicolon and improve typedef placement
+PREFIX: Brief description of change
 
-Jan's commit 9c474fa added ssize_t typedef for MSVC but was missing
-a semicolon, causing compilation errors. Also reordered to match
-SWI-Prolog convention where typedefs come before #define macros.
-
-Changes:
-- Added missing semicolon: typedef intptr_t ssize_t;
-- Moved typedef before #define read/_read and fileno/_fileno
-- Matches pattern in src/os/windows/uxnt.h and src/os/SWI-Stream.h
+Single line explaining what was changed and why.
 ```
+
+**Example:**
+```
+BUILD: Fix MSVC MSB8065 warnings for custom build outputs
+
+Touch OUTPUT files on MSVC to satisfy MSBuild's requirement that custom command outputs must exist after execution.
+```
+
+**Note:** No Co-Authored-By or other trailing metadata in commit messages.
