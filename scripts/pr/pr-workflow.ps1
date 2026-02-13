@@ -9,6 +9,28 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+# ============================================================================
+# LOAD ENVIRONMENT CONFIGURATION
+# ============================================================================
+# Source environment configuration (must happen before any path usage)
+# Scripts are in: .claude\skills\scripts\pr\
+# Config is in:   .claude\skills\config\ (two levels up: ..\..\config\)
+$configScript = Join-Path $PSScriptRoot "..\..\config\setup-environment.ps1"
+if (Test-Path $configScript) {
+    . $configScript -SkipValidation
+} else {
+    Write-Host "[ERROR] Configuration script not found at: $configScript" -ForegroundColor Red
+    Write-Host "Please run: .\..\config\setup-environment.ps1" -ForegroundColor Red
+    exit 1
+}
+
+# Validate GitHub user is set
+if (-not $env:GITHUB_USER) {
+    Write-Host "[ERROR] GITHUB_USER environment variable not set" -ForegroundColor Red
+    Write-Host "Set it manually: `$env:GITHUB_USER = 'YourGitHubUsername'" -ForegroundColor Red
+    exit 1
+}
+
 # Repository mapping
 $repo_mapping = @{
     'swipl-devel' = 'SWI-Prolog/swipl-devel'
@@ -123,14 +145,14 @@ function Create-PullRequest {
 
     if ($dry_run) {
         Write-Host "[DRY RUN] Would execute:" -ForegroundColor Yellow
-        Write-Host "gh pr create --repo $upstream_repo --head EricGT:$current_branch --title `"$pr_title`" --body `"$pr_body`""
+        Write-Host "gh pr create --repo $upstream_repo --head $($env:GITHUB_USER):$current_branch --title `"$pr_title`" --body `"$pr_body`""
         return $null
     }
 
     Write-Host "Executing: gh pr create --repo $upstream_repo..." -ForegroundColor Yellow
 
     try {
-        $pr_url = gh pr create --repo $upstream_repo --head "EricGT:$current_branch" `
+        $pr_url = gh pr create --repo $upstream_repo --head "$($env:GITHUB_USER):$current_branch" `
             --title "$pr_title" --body "$pr_body" 2>&1
 
         Write-Host "✓ PR created successfully!" -ForegroundColor Green

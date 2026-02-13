@@ -50,7 +50,7 @@ Shows git status for main repo and all forked submodules in parallel.
 ```
 
 **Actions:**
-1. Check main repo: `/c/dev-MSVC-PR/swipl-devel`
+1. Check main repo: `/c/<YOUR_SOURCE_DIR>`
 2. Check each forked package in parallel
 3. Report current branch, dirty files, ahead/behind status
 

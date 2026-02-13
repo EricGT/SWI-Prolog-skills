@@ -9,7 +9,7 @@
 .PARAMETER BranchType
     Type of branch: fix, feature, refactor, test, docs
 .PARAMETER Repository
-    Path to the repository (default: C:\dev-MSVC-PR\swipl-devel)
+    Path to the repository (default: from SWIPL_SOURCE_DIR environment variable)
 .PARAMETER DryRun
     If $true (default), shows commands without executing them.
 .EXAMPLE
@@ -20,18 +20,38 @@
     .\setup-new-branch.ps1 -BranchName "fix-boot-debug-autoload"
 
     # Create in different repo
-    .\setup-new-branch.ps1 -BranchName "fix-pcre-unicode" -Repository "C:\dev-MSVC-PR\swipl-devel\packages\pcre"
+    .\setup-new-branch.ps1 -BranchName "fix-pcre-unicode" -Repository "<YOUR_SOURCE_DIR>\packages\pcre"
 #>
 
 param(
     [string]$BranchName = "",
     [ValidateSet("fix", "feature", "refactor", "test", "docs")]
     [string]$BranchType = "fix",
-    [string]$Repository = "C:\dev-MSVC-PR\swipl-devel",
+    [string]$Repository,
     [bool]$DryRun = $true
 )
 
 $ErrorActionPreference = 'Continue'
+
+# ============================================================================
+# LOAD ENVIRONMENT CONFIGURATION
+# ============================================================================
+# Source environment configuration (must happen before any path usage)
+# Scripts are in: .claude\skills\scripts\pr\
+# Config is in:   .claude\skills\config\ (two levels up: ..\..\config\)
+$configScript = Join-Path $PSScriptRoot "..\..\config\setup-environment.ps1"
+if (Test-Path $configScript) {
+    . $configScript -SkipValidation
+} else {
+    Write-Host "[ERROR] Configuration script not found at: $configScript" -ForegroundColor Red
+    Write-Host "Please run: .\..\config\setup-environment.ps1" -ForegroundColor Red
+    exit 1
+}
+
+# Use SWIPL_SOURCE_DIR if Repository not provided
+if (-not $Repository) {
+    $Repository = $env:SWIPL_SOURCE_DIR
+}
 
 function Show-BranchNameSuggestions {
     Write-Host ""
@@ -175,7 +195,7 @@ if ($DryRun) {
     Write-Host "   git push origin $BranchName" -ForegroundColor Gray
     Write-Host ""
     Write-Host "4. Create PR:" -ForegroundColor Yellow
-    Write-Host "   gh pr create --repo SWI-Prolog/<package> --head EricGT:$BranchName" -ForegroundColor Gray
+    Write-Host "   gh pr create --repo SWI-Prolog/<package> --head `$(`$env:GITHUB_USER):$BranchName" -ForegroundColor Gray
 } else {
     Write-Host "Branch '$BranchName' created successfully!" -ForegroundColor Green
     Write-Host ""

@@ -2,9 +2,34 @@
 # Uses gh CLI to list pull requests across main repo and all forked packages
 
 param(
-    [string]$Author = "EricGT",
+    [string]$Author,
     [string]$State = "open"
 )
+
+# ============================================================================
+# LOAD ENVIRONMENT CONFIGURATION
+# ============================================================================
+# Source environment configuration (must happen before any path usage)
+# Scripts are in: .claude\skills\scripts\pr\
+# Config is in:   .claude\skills\config\ (two levels up: ..\..\config\)
+$configScript = Join-Path $PSScriptRoot "..\..\config\setup-environment.ps1"
+if (Test-Path $configScript) {
+    . $configScript -SkipValidation
+} else {
+    Write-Host "[ERROR] Configuration script not found at: $configScript" -ForegroundColor Red
+    Write-Host "Please run: .\..\config\setup-environment.ps1" -ForegroundColor Red
+    exit 1
+}
+
+# Use GITHUB_USER if Author not provided
+if (-not $Author) {
+    $Author = $env:GITHUB_USER
+}
+
+if (-not $Author) {
+    Write-Host "[ERROR] GitHub username not found. Set GITHUB_USER or provide -Author parameter." -ForegroundColor Red
+    exit 1
+}
 
 # Repositories to check
 $repos = @(

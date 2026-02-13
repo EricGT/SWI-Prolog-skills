@@ -8,19 +8,37 @@ param(
 $ErrorActionPreference = 'Continue'
 $WarningPreference = 'Continue'
 
-# Repository paths
+# ============================================================================
+# LOAD ENVIRONMENT CONFIGURATION
+# ============================================================================
+# Source environment configuration (must happen before any path usage)
+# Scripts are in: .claude\skills\scripts\pr\
+# Config is in:   .claude\skills\config\ (two levels up: ..\..\config\)
+$configScript = Join-Path $PSScriptRoot "..\..\config\setup-environment.ps1"
+if (Test-Path $configScript) {
+    . $configScript -SkipValidation
+} else {
+    Write-Host "[ERROR] Configuration script not found at: $configScript" -ForegroundColor Red
+    Write-Host "Please run: .\..\config\setup-environment.ps1" -ForegroundColor Red
+    exit 1
+}
+
+# ============================================================================
+# REPOSITORY PATHS (from environment variables)
+# ============================================================================
+$sourceDir = $env:SWIPL_SOURCE_DIR
 $repos = @(
-    @{ Name = "swipl-devel"; Path = "C:\dev-MSVC-PR\swipl-devel" },
-    @{ Name = "packages-bdb"; Path = "C:\dev-MSVC-PR\swipl-devel\packages\bdb" },
-    @{ Name = "packages-clib"; Path = "C:\dev-MSVC-PR\swipl-devel\packages\clib" },
-    @{ Name = "packages-pcre"; Path = "C:\dev-MSVC-PR\swipl-devel\packages\pcre" },
-    @{ Name = "packages-cpp"; Path = "C:\dev-MSVC-PR\swipl-devel\packages\cpp" },
-    @{ Name = "packages-jpl"; Path = "C:\dev-MSVC-PR\swipl-devel\packages\jpl" },
-    @{ Name = "packages-libedit"; Path = "C:\dev-MSVC-PR\swipl-devel\packages\libedit" },
-    @{ Name = "packages-nlp"; Path = "C:\dev-MSVC-PR\swipl-devel\packages\nlp" },
-    @{ Name = "packages-semweb"; Path = "C:\dev-MSVC-PR\swipl-devel\packages\semweb" },
-    @{ Name = "packages-xpce"; Path = "C:\dev-MSVC-PR\swipl-devel\packages\xpce" },
-    @{ Name = "winlibedit"; Path = "C:\dev-MSVC-PR\swipl-devel\packages\libedit\libedit" }
+    @{ Name = "swipl-devel"; Path = $sourceDir },
+    @{ Name = "packages-bdb"; Path = "$sourceDir\packages\bdb" },
+    @{ Name = "packages-clib"; Path = "$sourceDir\packages\clib" },
+    @{ Name = "packages-pcre"; Path = "$sourceDir\packages\pcre" },
+    @{ Name = "packages-cpp"; Path = "$sourceDir\packages\cpp" },
+    @{ Name = "packages-jpl"; Path = "$sourceDir\packages\jpl" },
+    @{ Name = "packages-libedit"; Path = "$sourceDir\packages\libedit" },
+    @{ Name = "packages-nlp"; Path = "$sourceDir\packages\nlp" },
+    @{ Name = "packages-semweb"; Path = "$sourceDir\packages\semweb" },
+    @{ Name = "packages-xpce"; Path = "$sourceDir\packages\xpce" },
+    @{ Name = "winlibedit"; Path = "$sourceDir\packages\libedit\libedit" }
 )
 
 function Run-Command {
@@ -74,7 +92,7 @@ foreach ($repo in $repos) {
 }
 
 Write-Host "Cleanup: Submodules" -ForegroundColor Blue
-Run-Command "git submodule update --recursive" "Reset submodules" "C:\dev-MSVC-PR\swipl-devel"
+Run-Command "git submodule update --recursive" "Reset submodules" $sourceDir
 
 Write-Host "============================" -ForegroundColor Cyan
 Write-Host "Sync Complete!" -ForegroundColor Cyan

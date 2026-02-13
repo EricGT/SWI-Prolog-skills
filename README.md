@@ -101,7 +101,7 @@ To use these skills in your own project:
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/EricGT/SWI-Prolog-skills.git
+   git clone https://github.com/<YOUR_GITHUB_USER>/SWI-Prolog-skills.git
    ```
 
 2. Copy the desired skills to your project's `.claude/skills/` directory:
@@ -112,6 +112,8 @@ To use these skills in your own project:
    ```
 
 3. The skills will be automatically detected by Claude Code when you work in that project.
+
+> **Note:** Replace `<YOUR_GITHUB_USER>` with your GitHub username throughout this guide.
 
 ## Usage Examples
 
@@ -222,7 +224,7 @@ The SWI-Prolog project uses a main repository with multiple submodules. These sk
 ### Remote Configuration
 
 All forked repositories use this structure:
-- `origin` → Your fork (e.g., EricGT/packages-clib)
+- `origin` → Your fork (e.g., `<YOUR_GITHUB_USER>/packages-clib`)
 - `upstream` → Official SWI-Prolog repository
 
 Push to `origin`, create PRs to `upstream`.

@@ -38,8 +38,8 @@
         {
           "name": "Author",
           "type": "string",
-          "default": "EricGT",
-          "description": "Filter PRs by author"
+          "default": "${GITHUB_USER}",
+          "description": "Filter PRs by author (defaults to GITHUB_USER environment variable)"
         },
         {
           "name": "State",
@@ -77,8 +77,8 @@
         {
           "name": "Repository",
           "type": "string",
-          "default": "C:\\dev-MSVC-PR\\swipl-devel",
-          "description": "Repository path"
+          "default": "${SWIPL_SOURCE_DIR}",
+          "description": "Repository path (defaults to SWIPL_SOURCE_DIR environment variable)"
         },
         {
           "name": "DryRun",

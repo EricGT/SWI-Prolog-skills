@@ -6,7 +6,7 @@ A Claude Code skill for streamlined git operations in the SWI-Prolog PR developm
 
 The skill is project-specific and located at:
 ```
-C:\Users\Eric\Projects\SWI-Prolog-PR\.claude\skills\swipl-git-workflow\
+<YOUR_PROJECT_ROOT>\.claude\skills\swipl-git-workflow\
 ```
 
 It's automatically available when working in the SWI-Prolog PR project.
@@ -71,7 +71,7 @@ This keeps PR history linear and easy to review.
 - Suggests branch names based on task
 
 ### Fork Management
-- Origin → Your fork (EricGT/*)
+- Origin → Your fork (`<YOUR_GITHUB_USER>/*`)
 - Upstream → Official (SWI-Prolog/*)
 - Automatic repository mapping for PRs
 

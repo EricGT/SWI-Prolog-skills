@@ -112,6 +112,6 @@ __pycache__/
 # 2. Add a whitelist entry above (e.g., !scripts/pr/new-script.ps1)
 # 3. Commit to GitHub
 #
-# Dev/debug scripts stay in C:\Users\Eric\Projects\SWI-Prolog-PR\scripts\
+# Dev/debug scripts stay in the local scripts\ directory
 # only. They are NOT tracked in the public repo.
 #
