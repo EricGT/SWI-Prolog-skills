@@ -65,7 +65,7 @@ PREFIX: Brief description of change
 
 **⚠️ CRITICAL: Fork Must Exist Before Creating PR**
 
-If you get an error like `fatal: repository 'https://github.com/EricGT/<package>.git/' not found`, the GitHub fork doesn't exist yet. See the **Fork Setup** section in the `/swipl-git-workflow` skill for instructions on creating the fork.
+If you get an error like `fatal: repository 'https://github.com/<YOUR_GITHUB_USER>/<package>.git/' not found`, the GitHub fork doesn't exist yet. See the **Fork Setup** section in the `/swipl-git-workflow` skill for instructions on creating the fork.
 
 **CRITICAL: Always verify branch contents against `upstream/master`, NOT local `master`.**
 
@@ -256,7 +256,7 @@ See `/swipl-git-commit-messages` for full guidance.
 
 **Error:**
 ```
-fatal: repository 'https://github.com/EricGT/<package>.git/' not found
+fatal: repository 'https://github.com/<YOUR_GITHUB_USER>/<package>.git/' not found
 ```
 
 **Cause:** The GitHub fork for this package doesn't exist yet.

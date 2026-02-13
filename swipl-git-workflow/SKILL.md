@@ -7,6 +7,16 @@ description: Git workflow commands for SWI-Prolog PR development. Handles branch
 
 Git operations for the SWI-Prolog PR development environment with forked repositories and submodules.
 
+## Path Placeholders
+
+This documentation uses the following placeholders for paths. Replace them with your actual paths:
+
+- `<YOUR_PROJECT_ROOT>` - Your project directory (e.g., `C:\Users\John\Projects\swipl-pr`)
+- `<YOUR_SOURCE_DIR>` - SWI-Prolog source directory (e.g., `C:\dev\swipl-devel`)
+- `<YOUR_GITHUB_USER>` - Your GitHub username (e.g., `johndoe`)
+
+These paths are configured automatically by running `scripts\setup-wizard.ps1`.
+
 ## Available Operations
 
 Use `/swipl-git-workflow <operation>` where operation is one of:
@@ -101,7 +111,7 @@ Creates a PR from your fork to upstream SWI-Prolog repository.
 2. Verify branch is pushed to origin
 3. **Run pre-PR verification** (see Verification section below)
 4. Use `/swipl-pr-messages` skill to generate PR title and body
-5. Create PR using `gh pr create --repo SWI-Prolog/<package> --head EricGT:<branch>`
+5. Create PR using `gh pr create --repo SWI-Prolog/<package> --head <YOUR_GITHUB_USER>:<branch>`
 
 **Pre-PR Verification (MANDATORY):**
 
@@ -127,24 +137,24 @@ git diff upstream/master..HEAD -- .gitignore **/.gitignore
 **If verification fails:** Create a clean branch using cherry-pick (see Recovery section).
 
 **Repository Mapping:**
-- Main: `SWI-Prolog/swipl-devel` ← `EricGT/swipl-devel`
-- BDB: `SWI-Prolog/packages-bdb` ← `EricGT/packages-bdb`
-- Clib: `SWI-Prolog/packages-clib` ← `EricGT/packages-clib`
-- Cpp: `SWI-Prolog/packages-cpp` ← `EricGT/packages-cpp`
-- JPL: `SWI-Prolog/packages-jpl` ← `EricGT/packages-jpl`
-- Libedit: `SWI-Prolog/packages-libedit` ← `EricGT/packages-libedit`
-- NLP: `SWI-Prolog/packages-nlp` ← `EricGT/packages-nlp`
-- Pcre: `SWI-Prolog/packages-pcre` ← `EricGT/packages-pcre`
-- Semweb: `SWI-Prolog/packages-semweb` ← `EricGT/packages-semweb`
-- XPCE: `SWI-Prolog/packages-xpce` ← `EricGT/packages-xpce`
-- Winlibedit: `SWI-Prolog/winlibedit` ← `EricGT/winlibedit`
-- Debian: `SWI-Prolog/distro-debian` ← `EricGT/distro-debian`
+- Main: `SWI-Prolog/swipl-devel` ← `<YOUR_GITHUB_USER>/swipl-devel`
+- BDB: `SWI-Prolog/packages-bdb` ← `<YOUR_GITHUB_USER>/packages-bdb`
+- Clib: `SWI-Prolog/packages-clib` ← `<YOUR_GITHUB_USER>/packages-clib`
+- Cpp: `SWI-Prolog/packages-cpp` ← `<YOUR_GITHUB_USER>/packages-cpp`
+- JPL: `SWI-Prolog/packages-jpl` ← `<YOUR_GITHUB_USER>/packages-jpl`
+- Libedit: `SWI-Prolog/packages-libedit` ← `<YOUR_GITHUB_USER>/packages-libedit`
+- NLP: `SWI-Prolog/packages-nlp` ← `<YOUR_GITHUB_USER>/packages-nlp`
+- Pcre: `SWI-Prolog/packages-pcre` ← `<YOUR_GITHUB_USER>/packages-pcre`
+- Semweb: `SWI-Prolog/packages-semweb` ← `<YOUR_GITHUB_USER>/packages-semweb`
+- XPCE: `SWI-Prolog/packages-xpce` ← `<YOUR_GITHUB_USER>/packages-xpce`
+- Winlibedit: `SWI-Prolog/winlibedit` ← `<YOUR_GITHUB_USER>/winlibedit`
+- Debian: `SWI-Prolog/distro-debian` ← `<YOUR_GITHUB_USER>/distro-debian`
 
 **⚠️ Fork Missing Error:**
 
 If you encounter errors like:
 ```
-fatal: repository 'https://github.com/EricGT/<package>.git/' not found
+fatal: repository 'https://github.com/<YOUR_GITHUB_USER>/<package>.git/' not found
 ```
 
 This means the GitHub fork doesn't exist yet. See [Fork Setup](#fork-setup) section below.
@@ -213,7 +223,7 @@ Identifies which repository/package you're currently in.
 ## Remote Configuration
 
 All forked repositories use this remote structure:
-- `origin` → Your fork (EricGT/*)
+- `origin` → Your fork (<YOUR_GITHUB_USER>/*)
 - `upstream` → Official SWI-Prolog repository
 
 Push to `origin`, create PRs to `upstream`.
@@ -284,7 +294,7 @@ git diff upstream/master..HEAD --name-only  # Should show only intended files
 git push origin <feature-name>-clean
 
 # 6. Create PR with clean branch
-gh pr create --repo SWI-Prolog/<package> --head EricGT:<feature-name>-clean ...
+gh pr create --repo SWI-Prolog/<package> --head <YOUR_GITHUB_USER>:<feature-name>-clean ...
 ```
 
 ### Problem: Local `master` Out of Sync
@@ -363,7 +373,7 @@ git checkout master
 
 If you see:
 ```
-fatal: repository 'https://github.com/EricGT/<package>.git/' not found
+fatal: repository 'https://github.com/<YOUR_GITHUB_USER>/<package>.git/' not found
 ```
 
 The fork doesn't exist on GitHub yet. Complete the steps below.
@@ -388,7 +398,7 @@ For each forked package, you need to create a GitHub fork:
 
 2. **Click the "Fork" button** (top right corner)
 
-3. **Wait for the fork to be created** at `https://github.com/EricGT/<package>`
+3. **Wait for the fork to be created** at `https://github.com/<YOUR_GITHUB_USER>/<package>`
 
 4. **Test the remote connection:**
    ```bash
@@ -409,13 +419,13 @@ git remote -v
 
 Expected output:
 ```
-origin    https://github.com/EricGT/<package>.git (fetch)
-origin    https://github.com/EricGT/<package>.git (push)
+origin    https://github.com/<YOUR_GITHUB_USER>/<package>.git (fetch)
+origin    https://github.com/<YOUR_GITHUB_USER>/<package>.git (push)
 upstream  https://github.com/SWI-Prolog/<package>.git (fetch)
 upstream  https://github.com/SWI-Prolog/<package>.git (push)
 ```
 
-- `origin` should point to your fork (EricGT/*)
+- `origin` should point to your fork (<YOUR_GITHUB_USER>/*)
 - `upstream` should point to official repository (SWI-Prolog/*)
 
 ## Notes
