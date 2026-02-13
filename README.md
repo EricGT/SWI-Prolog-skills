@@ -31,7 +31,30 @@ These skills streamline the development workflow for contributing to [SWI-Prolog
 
 [Full Documentation →](swipl-git-workflow/SKILL.md)
 
-### 2. `swipl-pr-messages`
+### 2. `swipl-build`
+
+**Description:** Build and test SWI-Prolog with MSVC on Windows. Provides dry-run preview mode to preview build steps before executing. Automates MSVC environment setup, CMake configuration, compilation, and testing across Release, Debug, RelWithDebInfo, MinSizeRel, and Sanitize configurations.
+
+**Features:**
+- **Dry-run preview** - See full build plan before executing (default mode)
+- Multi-configuration support (Release, Debug, RelWithDebInfo, MinSizeRel, Sanitize)
+- Automatic MSVC environment initialization
+- Windows reserved device name handling (nul, con, prn)
+- Timestamped log files for each phase
+- Python and tool availability checking
+- Full test suite execution with timeout management
+
+**Quick Start:**
+```bash
+/swipl-build build Release              # Preview Release build
+/swipl-build build Release -execute     # Actually execute the build
+/swipl-build test Debug                 # Test Debug configuration
+/swipl-build clean                      # Clean build directory
+```
+
+[Full Documentation →](swipl-build/SKILL.md)
+
+### 3. `swipl-pr-messages`
 
 **Description:** Generate properly formatted SWI-Prolog pull request titles and body messages following project conventions.
 

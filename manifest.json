@@ -1,0 +1,113 @@
+{
+  "version": "1.0",
+  "name": "SWI-Prolog PR Scripts",
+  "description": "PowerShell automation scripts for SWI-Prolog fork workflow",
+  "scripts": [
+    {
+      "id": "resync-all-repos",
+      "name": "Resync All Repositories",
+      "description": "Sync main repo and all packages (bdb, clib, cpp, jpl, libedit, nlp, pcre, semweb, xpce, winlibedit) with upstream",
+      "path": "scripts/resync-all-repos.ps1",
+      "keywords": ["resync", "sync", "upstream", "fetch", "pull", "update", "master"],
+      "parameters": [
+        {
+          "name": "DryRun",
+          "type": "boolean",
+          "default": true,
+          "description": "Preview mode (true) or execute (false)"
+        },
+        {
+          "name": "Verbose",
+          "type": "switch",
+          "default": false,
+          "description": "Show detailed output"
+        }
+      ],
+      "execution": "powershell",
+      "working_directory": "C:\\Users\\Eric\\Projects\\SWI-Prolog-PR",
+      "confirmBeforeRun": true,
+      "requiresApproval": true
+    },
+    {
+      "id": "check-pr-status",
+      "name": "Check PR Status",
+      "description": "List open pull requests across all SWI-Prolog repositories (main + 10 packages)",
+      "path": "scripts/check-pr-status.ps1",
+      "keywords": ["pr", "status", "pull request", "check", "open", "list"],
+      "parameters": [
+        {
+          "name": "Author",
+          "type": "string",
+          "default": "EricGT",
+          "description": "Filter PRs by author"
+        },
+        {
+          "name": "State",
+          "type": "string",
+          "default": "open",
+          "enum": ["open", "closed", "merged", "all"],
+          "description": "PR state to filter"
+        }
+      ],
+      "execution": "powershell",
+      "working_directory": "C:\\Users\\Eric\\Projects\\SWI-Prolog-PR",
+      "confirmBeforeRun": false,
+      "requiresApproval": false
+    },
+    {
+      "id": "setup-new-branch",
+      "name": "Setup New Branch",
+      "description": "Create a new feature branch from master with naming suggestions (fix, feature, refactor, test, docs)",
+      "path": "scripts/setup-new-branch.ps1",
+      "keywords": ["branch", "create", "new", "feature", "setup"],
+      "parameters": [
+        {
+          "name": "BranchName",
+          "type": "string",
+          "default": "",
+          "description": "Name of branch to create (interactive if empty)"
+        },
+        {
+          "name": "BranchType",
+          "type": "string",
+          "default": "fix",
+          "enum": ["fix", "feature", "refactor", "test", "docs"],
+          "description": "Type of branch"
+        },
+        {
+          "name": "Repository",
+          "type": "string",
+          "default": "C:\\dev-MSVC-PR\\swipl-devel",
+          "description": "Repository path"
+        },
+        {
+          "name": "DryRun",
+          "type": "boolean",
+          "default": true,
+          "description": "Preview mode (true) or execute (false)"
+        }
+      ],
+      "execution": "powershell",
+      "working_directory": "C:\\Users\\Eric\\Projects\\SWI-Prolog-PR",
+      "confirmBeforeRun": true,
+      "requiresApproval": true
+    }
+  ],
+  "intents": [
+    {
+      "pattern": ["resync", "sync repos", "sync repositories", "update repos", "fetch upstream", "pull upstream"],
+      "scriptId": "resync-all-repos",
+      "description": "User wants to synchronize repositories with upstream"
+    },
+    {
+      "pattern": ["check pr", "pr status", "list prs", "open prs", "my prs", "check pull requests"],
+      "scriptId": "check-pr-status",
+      "description": "User wants to see pull request status"
+    },
+    {
+      "pattern": ["create branch", "new branch", "setup branch", "branch", "start work"],
+      "scriptId": "setup-new-branch",
+      "description": "User wants to create a new feature branch"
+    }
+  ]
+}

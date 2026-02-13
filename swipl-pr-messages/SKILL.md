@@ -5,6 +5,28 @@ description: Generate properly formatted SWI-Prolog pull request titles and body
 
 # SWI-Prolog Pull Request Messages
 
+## Overview
+
+This skill covers PR titles and bodies. **PRs require a commit message first**—they go hand-in-hand.
+
+**The documentation workflow:**
+
+```
+1. Write code (C or Prolog)
+   ↓
+2. Consult code documentation skill
+   - /swipl-c-code-documentation (for C code)
+   - /swipl-prolog-code-documentation (for Prolog code)
+   ↓
+3. Write commit message
+   Consult /swipl-git-commit-messages
+   ↓
+4. Create PR (if needed)
+   This skill: /swipl-pr-messages
+```
+
+**Key insight:** Commit messages document the *why* in detail. PR messages are brief context for reviewers, referencing the commit message for full details.
+
 ## Title Format
 
 PR titles use a category prefix followed by a brief description:
@@ -13,28 +35,31 @@ PR titles use a category prefix followed by a brief description:
 PREFIX: Brief description of change
 ```
 
+**Keep PR titles to 40-50 characters maximum.** They appear in SWI-Prolog release topics on Discourse where users see them—they need to be concise and scannable.
+
 ### Title Prefixes
 
 | Prefix | Use For | Example |
 |--------|---------|---------|
-| `FIXED:` | Bug fixes | `FIXED: Memory leak in re_compile` |
-| `ADDED:` | New features or functionality | `ADDED: process_which/2 to find executable` |
-| `ENHANCED:` | Improvements to existing features | `ENHANCED: uri_file_name/2 mode (+,-): Allow for file://host/...` |
-| `MODIFIED:` | Behavior changes (not bugs) | `MODIFIED: term_hash/2: extended range` |
-| `DOC:` | Documentation changes only | `DOC: gcd/2 and lcm/2 are not operators` |
-| `PORT:` | Portability fixes (platform, compiler) | `PORT: Ensure default 4Mb C-stack on Windows` |
-| `BUILD:` | Build system, CMake, CI/CD | `BUILD: Install pldoc/hooks.pl instead of the .qlf file` |
-| `TEST:` | Test additions, fixes, improvements | `TEST: term_hash/2 for indirect data types` |
-| `CLEANUP:` | Code cleanup, refactoring | `CLEANUP: Avoid reading uninitialized local variable` |
-| `COMPAT:` | API/version compatibility | `COMPAT: Use new PL_dispatch() API` |
-| `WASM:` | WebAssembly specific changes | `WASM: Added Prolog.__with_stack_strings()` |
+| `FIXED:` | Bug fixes | `FIXED: crypt/2 memory corruption` |
+| `ADDED:` | New features | `ADDED: process_which/2` |
+| `ENHANCED:` | Improvements | `ENHANCED: rewrite_host/3 for tcp` |
+| `MODIFIED:` | Behavior changes | `MODIFIED: term_hash/2 range` |
+| `DOC:` | Documentation only | `DOC: thread_property/2 debug` |
+| `PORT:` | Portability fixes | `PORT: 4Mb C-stack default Windows` |
+| `BUILD:` | Build system, CMake, CI/CD | `BUILD: MSVC MSB8065 output fix` |
+| `TEST:` | Test additions/fixes | `TEST: term_hash/2 indirect types` |
+| `CLEANUP:` | Code cleanup, refactoring | `CLEANUP: uninitialized variable` |
+| `COMPAT:` | API/version compatibility | `COMPAT: PL_dispatch() API` |
+| `WASM:` | WebAssembly specific | `WASM: stack_strings() interface` |
 
 ### Title Guidelines
 
-- Keep under 70 characters when possible
-- Use `FIXED:` (past tense) not `FIX:` - this is the project convention
-- Be specific: `FIXED: MSVC compilation error in socket.c` not `FIXED: bug`
-- Mention affected predicate/component: `ADDED: ensure_directory/1`
+- **40-50 characters maximum** (appears in release notes and Discourse)
+- Use past tense: `FIXED:`, `ADDED:` (not `FIX:`, `ADD:`)
+- Be specific but brief: `FIXED: socket.c compilation` not just `FIXED: bug`
+- Remove redundancy: `ADDED: process_which/2` not `ADDED: New process_which/2 predicate`
+- Mention affected component when needed: `ENHANCED: tcp_connect/3`
 
 ## Pre-PR Checklist
 
@@ -116,30 +141,38 @@ Local `master` may have:
 
 **Always use `upstream/master` as your comparison base for PRs.**
 
-## Body Formats
+## Body Format
 
 **IMPORTANT: Keep PR bodies concise - maximum 2 lines, preferably 1 line.**
 
+The PR body is NOT the same as the commit message body. The PR body is brief context for the reviewer. **Full details go in the commit message body** (see `/swipl-git-commit-messages` skill).
+
 ### Preferred: One-line Body
 
-For most changes, a single line explaining what was changed:
+For most changes, a single line:
 
 ```markdown
-Modified add_swipl_target() in cmake/QLF.cmake to touch OUTPUT files on MSVC.
+Details in commit message.
+```
+
+Or a brief statement:
+
+```markdown
+Fixed MSVC output file handling in cmake/QLF.cmake.
 ```
 
 ### Maximum: Two-line Body
 
-Only when absolutely necessary:
+Only when context is especially helpful:
 
 ```markdown
-Modified add_swipl_target() in cmake/QLF.cmake to touch OUTPUT files on MSVC.
-This satisfies MSBuild's requirement that custom command outputs must exist.
+Fixed MSVC MSB8065 warnings for custom build outputs.
+Touch OUTPUT files to satisfy MSBuild's requirement.
 ```
 
-### Exception: External Reference
+### For Discussion Links
 
-Or just link to discussion:
+Reference Discourse discussions:
 
 ```markdown
 See discussion: https://swi-prolog.discourse.group/t/topic-slug/1234
@@ -199,23 +232,23 @@ See build log: www.stats.ox.ac.uk/pub/bdr/M1-SAN/rswipl/00check.log
 
 ## Commit Message Format
 
-**CRITICAL: Commit messages must be maximum 2 lines total (title + 1 description line).**
+Commit messages are documented in detail in the `/swipl-git-commit-messages` skill. When creating a PR, your commit message should already follow that skill's guidelines:
 
-**Format:**
+- **Title**: 40-50 characters with PREFIX: description
+- **Body**: Detailed explanation of why the change was made
+- **Source of truth**: Commit message body contains the full explanation; PR body is just brief context
+
+The relationship:
+
 ```
-PREFIX: Brief description of change
-
-Single line explaining what was changed and why.
+Commit Title:  FIXED: crypt/2 memory corruption on Windows
+Commit Body:   [Detailed explanation of the bug and fix]
+    ↓
+PR Title:      FIXED: crypt/2 memory corruption on Windows (same)
+PR Body:       [1-2 lines referencing commit message for details]
 ```
 
-**Example:**
-```
-BUILD: Fix MSVC MSB8065 warnings for custom build outputs
-
-Touch OUTPUT files on MSVC to satisfy MSBuild's requirement that custom command outputs must exist after execution.
-```
-
-**Note:** No Co-Authored-By or other trailing metadata in commit messages.
+See `/swipl-git-commit-messages` for full guidance.
 
 ## Troubleshooting
 

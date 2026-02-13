@@ -1,0 +1,117 @@
+# =============================================================================
+# SWI-Prolog Skills Repository - .gitignore
+# =============================================================================
+# This file controls which scripts and files are tracked in the GitHub repo.
+# Only skill-related scripts are included; dev/debug tools remain in the
+# private SWI-Prolog-PR project.
+#
+# Structure:
+# - skills/          - Claude Code skills (tracked)
+# - scripts/pr/      - PR workflow scripts (tracked)
+# - scripts/build/   - Build system scripts (tracked)
+# - All other files are ignored unless explicitly whitelisted below
+#
+# =============================================================================
+
+# Ignore everything by default
+*
+!*/
+
+# ============================================================
+# WHITELIST: Include only skill-related scripts and skills
+# ============================================================
+
+# Directories to track
+!.github/
+!.github/**
+!skills/
+!skills/**
+!scripts/
+!scripts/pr/
+!scripts/pr/**
+!scripts/build/
+!scripts/build/**
+
+# Root documentation and configuration files
+!README.md
+!LICENSE
+!.gitignore
+!.gitattributes
+!manifest.json
+
+# Skill-related markdown files
+!skills/**/*.md
+!scripts/**/*.md
+!scripts/**/*.ps1
+
+# PR workflow scripts (in scripts/pr/)
+!scripts/pr/pr-workflow.ps1
+!scripts/pr/setup-new-branch.ps1
+!scripts/pr/resync-all-repos.ps1
+!scripts/pr/check-pr-status.ps1
+
+# Build scripts (in scripts/build/)
+!scripts/build/build-msvc.ps1
+
+# Scripts documentation
+!scripts/README.md
+!scripts/pr/.gitkeep
+!scripts/build/.gitkeep
+
+# ============================================================
+# EXCLUDE: Everything else (dev/debug tools, output, etc.)
+# ============================================================
+
+# Exclude all other scripts (not listed above)
+scripts/*.ps1
+scripts/*.bat
+scripts/*.md
+scripts/Configure-*.ps1
+scripts/Enable-*.ps1
+scripts/Find-*.ps1
+scripts/Install-*.ps1
+scripts/Verify-*.ps1
+
+# Exclude local environment files
+.env
+.env.local
+*.local
+*.private
+
+# Exclude build artifacts and logs
+build/
+output/
+*.log
+*.txt
+
+# Exclude editor/IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Exclude Node/npm files (if applicable)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Exclude Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# ============================================================
+# NOTES
+# ============================================================
+#
+# To add new scripts to the repo:
+# 1. Move the script to scripts/pr/ or scripts/build/
+# 2. Add a whitelist entry above (e.g., !scripts/pr/new-script.ps1)
+# 3. Commit to GitHub
+#
+# Dev/debug scripts stay in C:\Users\Eric\Projects\SWI-Prolog-PR\scripts\
+# only. They are NOT tracked in the public repo.
+#
