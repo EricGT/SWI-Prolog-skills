@@ -1,6 +1,6 @@
 ---
 name: swipl-pr-messages
-description: Generate properly formatted SWI-Prolog pull request titles and body messages following project conventions. Use when creating PRs for SWI-Prolog repositories (swipl-devel, packages-clib, packages-pcre, packages-xpce, etc.).
+description: Generate properly formatted SWI-Prolog pull request titles and body messages following project conventions. Use when creating PRs for any SWI-Prolog repository (https://github.com/SWI-Prolog/*). When code has associated tests, combine them in a single PR.
 ---
 
 # SWI-Prolog Pull Request Messages
@@ -60,6 +60,50 @@ PREFIX: Brief description of change
 - Be specific but brief: `FIXED: socket.c compilation` not just `FIXED: bug`
 - Remove redundancy: `ADDED: process_which/2` not `ADDED: New process_which/2 predicate`
 - Mention affected component when needed: `ENHANCED: tcp_connect/3`
+
+## Code and Test PRs
+
+**IMPORTANT: When submitting code with associated tests, combine them in a single PR.**
+
+Do NOT create separate PRs for code and tests. Instead:
+
+1. **Make code changes** in the main source directory
+2. **Add or modify tests** in the test directory
+3. **Commit both together** with a single commit message (see `/swipl-git-commit-messages`)
+4. **Create ONE PR** containing both code and tests
+
+### Why Combine Code and Tests?
+
+- Reviewers see the full context: what changed and how it's tested
+- Tests validate the code changes immediately
+- Single PR keeps related changes grouped
+- Cleaner history: no orphaned test commits without associated code
+- Faster review: no back-and-forth between separate PRs
+
+### Example Structure
+
+For a bug fix in `packages-clib`:
+
+```bash
+# Edit source file
+edit src/process.c
+
+# Add or update test
+edit test/test_process.pl
+
+# Commit both together
+git add src/process.c test/test_process.pl
+git commit -m "FIXED: process_create/3 handling..."
+
+# Create PR containing both
+git push origin fix-process-handling
+# Then create PR via `gh pr create` or GitHub UI
+```
+
+The resulting PR will show:
+- Source files changed
+- Test files changed
+- Single logical unit for review
 
 ## Pre-PR Checklist
 

@@ -115,20 +115,35 @@ Creates a PR from your fork to upstream SWI-Prolog repository.
 
 **Pre-PR Verification (MANDATORY):**
 
-Before creating PR, **ALWAYS** run these checks against `upstream/master`:
+Before creating PR, **ALWAYS** run these checks:
+
+**1. Verify all forked submodules are on branches (not detached HEAD):**
+
+```powershell
+cd <YOUR_PROJECT_ROOT>
+.\scripts\check-submodule-heads.ps1
+```
+
+This checks all 11 forked submodules. If any are detached:
+- Checkout master in the affected submodule
+- Update the parent repo to point to the new commit
+- See CLAUDE.md "Verifying Submodule State" section for fix instructions
+
+**2. Run commit/file verification against `upstream/master`:**
 
 ```bash
-# 1. Check all commits in branch
+# Check all commits in branch
 git log upstream/master..HEAD --oneline
 
-# 2. Check all changed files
+# Check all changed files
 git diff upstream/master..HEAD --name-only
 
-# 3. Verify no .gitignore changes (unless intended)
+# Verify no .gitignore changes (unless intended)
 git diff upstream/master..HEAD -- .gitignore **/.gitignore
 ```
 
 **Expected results:**
+- All submodules on master branches (step 1)
 - Only commits related to your PR
 - No merge commits
 - Only files you intended to change

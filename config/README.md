@@ -17,22 +17,28 @@ This script will:
 - **Validate** that all required paths are configured correctly
 - **Display** a summary of your environment
 
-### 2. (Optional) Create a Persistent Configuration
+### 2. (Optional) Make Configuration Persistent Across Sessions
 
-If you want environment variables to persist across sessions:
+By default, `setup-environment.ps1` configures variables for the current session only. To persist them:
 
-1. **Copy the template:**
+**Option A: Add to PowerShell Profile** (Recommended)
+```powershell
+# In your $PROFILE file, add:
+. "$PSScriptRoot\config\setup-environment.ps1"
+```
+Then reload your profile: `. $PROFILE`
+
+**Option B: Create Custom Configuration** (Advanced)
+If auto-detection doesn't work for you:
+
+1. Copy the template:
    ```powershell
    Copy-Item config.template.json config.json
    ```
 
-2. **Edit `config.json`** with your paths
+2. Edit `config.json` - replace the "default" values with your actual paths (not required for most users)
 
-3. **Add to PowerShell profile** (optional):
-   ```powershell
-   # In your $PROFILE file, add:
-   . "$PSScriptRoot\config\setup-environment.ps1"
-   ```
+3. The script will prefer `config.json` values if they exist, otherwise uses auto-detection
 
 ## Environment Variables
 
@@ -61,17 +67,22 @@ The setup script configures these environment variables:
 | `SWIPL_OUTPUT_DIR` | Build logs directory: `{SWIPL_PROJECT_ROOT}\output` |
 | `SWIPL_BUILD_DIR` | CMake build directory: `{SWIPL_SOURCE_DIR}\build` |
 
-## Manual Configuration
+## Manual Configuration (Fallback Only)
 
-If auto-detection fails, set environment variables manually:
+**You should not need to do this** - `setup-environment.ps1` auto-detects everything.
+
+Only use manual configuration if auto-detection fails and shows [ERROR] messages:
 
 ```powershell
+# Fallback: Set variables manually
 $env:SWIPL_SOURCE_DIR = "C:\path\to\swipl-devel"
 $env:SWIPL_PROJECT_ROOT = "C:\path\to\your-project"
 $env:VCPKG_ROOT = "C:\path\to\vcpkg"
 $env:PYTHON_ROOT = "C:\Python313"
 $env:GITHUB_USER = "your-username"
 ```
+
+**Better approach:** Check the "Troubleshooting" section below for specific auto-detection issues.
 
 ## Troubleshooting
 

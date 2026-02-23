@@ -2,8 +2,10 @@
 # Fetches latest from upstream, resets local master branches, and pushes to forks.
 
 param(
-    [bool]$DryRun = $true
+    [switch]$Execute
 )
+
+$DryRun = -not $Execute
 
 $ErrorActionPreference = 'Continue'
 $WarningPreference = 'Continue'
@@ -38,7 +40,8 @@ $repos = @(
     @{ Name = "packages-nlp"; Path = "$sourceDir\packages\nlp" },
     @{ Name = "packages-semweb"; Path = "$sourceDir\packages\semweb" },
     @{ Name = "packages-xpce"; Path = "$sourceDir\packages\xpce" },
-    @{ Name = "winlibedit"; Path = "$sourceDir\packages\libedit\libedit" }
+    @{ Name = "winlibedit"; Path = "$sourceDir\packages\libedit\libedit" },
+    @{ Name = "distro-debian"; Path = "$sourceDir\debian" }
 )
 
 function Run-Command {
@@ -100,5 +103,5 @@ Write-Host ""
 
 if ($DryRun) {
     Write-Host "To execute, run:" -ForegroundColor Yellow
-    Write-Host "  .\resync-all-repos.ps1 -DryRun " + '$' + "false" -ForegroundColor Yellow
+    Write-Host "  .\resync-all-repos.ps1 -Execute" -ForegroundColor Yellow
 }

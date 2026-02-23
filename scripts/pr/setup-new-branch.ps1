@@ -10,8 +10,8 @@
     Type of branch: fix, feature, refactor, test, docs
 .PARAMETER Repository
     Path to the repository (default: from SWIPL_SOURCE_DIR environment variable)
-.PARAMETER DryRun
-    If $true (default), shows commands without executing them.
+.PARAMETER Execute
+    If present, actually executes commands. Default is dry-run (preview only).
 .EXAMPLE
     # Interactive mode - will suggest naming
     .\setup-new-branch.ps1
@@ -28,8 +28,10 @@ param(
     [ValidateSet("fix", "feature", "refactor", "test", "docs")]
     [string]$BranchType = "fix",
     [string]$Repository,
-    [bool]$DryRun = $true
+    [switch]$Execute
 )
+
+$DryRun = -not $Execute
 
 $ErrorActionPreference = 'Continue'
 
@@ -184,8 +186,8 @@ if ($DryRun) {
     Write-Host "Branch ready to be created!" -ForegroundColor Green
     Write-Host ""
     Write-Host "Next steps:" -ForegroundColor Cyan
-    Write-Host "1. Run with -DryRun `$false to create the branch" -ForegroundColor Yellow
-    Write-Host "   .\setup-new-branch.ps1 -BranchName '$BranchName' -DryRun `$false" -ForegroundColor Yellow
+    Write-Host "1. Run with -Execute to create the branch" -ForegroundColor Yellow
+    Write-Host "   .\setup-new-branch.ps1 -BranchName '$BranchName' -Execute" -ForegroundColor Yellow
     Write-Host ""
     Write-Host "2. Make your code changes" -ForegroundColor Yellow
     Write-Host ""

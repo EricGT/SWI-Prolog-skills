@@ -7,7 +7,7 @@
       "id": "resync-all-repos",
       "name": "Resync All Repositories",
       "description": "Sync main repo and all packages (bdb, clib, cpp, jpl, libedit, nlp, pcre, semweb, xpce, winlibedit) with upstream",
-      "path": "scripts/resync-all-repos.ps1",
+      "path": "scripts/pr/resync-all-repos.ps1",
       "keywords": ["resync", "sync", "upstream", "fetch", "pull", "update", "master"],
       "parameters": [
         {
@@ -32,7 +32,7 @@
       "id": "check-pr-status",
       "name": "Check PR Status",
       "description": "List open pull requests across all SWI-Prolog repositories (main + 10 packages)",
-      "path": "scripts/check-pr-status.ps1",
+      "path": "scripts/pr/check-pr-status.ps1",
       "keywords": ["pr", "status", "pull request", "check", "open", "list"],
       "parameters": [
         {
@@ -58,7 +58,7 @@
       "id": "setup-new-branch",
       "name": "Setup New Branch",
       "description": "Create a new feature branch from master with naming suggestions (fix, feature, refactor, test, docs)",
-      "path": "scripts/setup-new-branch.ps1",
+      "path": "scripts/pr/setup-new-branch.ps1",
       "keywords": ["branch", "create", "new", "feature", "setup"],
       "parameters": [
         {
