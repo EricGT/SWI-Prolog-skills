@@ -3,8 +3,7 @@
 # Usage: .\pr-workflow.ps1
 
 param(
-    [switch]$SkipVerification = $false,
-    [switch]$DryRun = $false
+    [switch]$SkipVerification = $false
 )
 
 $ErrorActionPreference = 'Stop'
@@ -15,7 +14,12 @@ $ErrorActionPreference = 'Stop'
 # Source environment configuration (must happen before any path usage)
 # Scripts are in: .claude\skills\scripts\pr\
 # Config is in:   .claude\skills\config\ (two levels up: ..\..\config\)
-$configScript = Join-Path $PSScriptRoot "..\..\config\setup-environment.ps1"
+# Resolve symlinks so $PSScriptRoot points to the real directory, not a symlink.
+$scriptDir = if ($PSCommandPath) {
+    Split-Path -Parent (Get-Item $PSCommandPath).Target -ErrorAction SilentlyContinue
+} else { $null }
+if (-not $scriptDir) { $scriptDir = $PSScriptRoot }
+$configScript = Join-Path $scriptDir "..\..\config\setup-environment.ps1"
 if (Test-Path $configScript) {
     . $configScript -SkipValidation
 } else {
@@ -125,8 +129,7 @@ function Run-VerificationChecks {
 function Create-PullRequest {
     param(
         [string]$upstream_repo,
-        [string]$current_branch,
-        [switch]$dry_run
+        [string]$current_branch
     )
 
     Write-Host ""
@@ -142,12 +145,6 @@ function Create-PullRequest {
     Write-Host "Body:" -ForegroundColor Cyan
     Write-Host "$pr_body"
     Write-Host ""
-
-    if ($dry_run) {
-        Write-Host "[DRY RUN] Would execute:" -ForegroundColor Yellow
-        Write-Host "gh pr create --repo $upstream_repo --head $($env:GITHUB_USER):$current_branch --title `"$pr_title`" --body `"$pr_body`""
-        return $null
-    }
 
     Write-Host "Executing: gh pr create --repo $upstream_repo..." -ForegroundColor Yellow
 
@@ -209,7 +206,6 @@ try {
         upstream_repo  = $repo_info.upstream
         current_branch = $current_branch
     }
-    if ($DryRun) { $prArgs['dry_run'] = $true }
     Create-PullRequest @prArgs
 
     Write-Host ""

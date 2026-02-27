@@ -1,12 +1,6 @@
 # Resync all SWI-Prolog repositories (main + packages) with upstream
 # Fetches latest from upstream, resets local master branches, and pushes to forks.
 
-param(
-    [switch]$Execute
-)
-
-$DryRun = -not $Execute
-
 $ErrorActionPreference = 'Continue'
 $WarningPreference = 'Continue'
 
@@ -16,7 +10,12 @@ $WarningPreference = 'Continue'
 # Source environment configuration (must happen before any path usage)
 # Scripts are in: .claude\skills\scripts\pr\
 # Config is in:   .claude\skills\config\ (two levels up: ..\..\config\)
-$configScript = Join-Path $PSScriptRoot "..\..\config\setup-environment.ps1"
+# Resolve symlinks so $PSScriptRoot points to the real directory, not a symlink.
+$scriptDir = if ($PSCommandPath) {
+    Split-Path -Parent (Get-Item $PSCommandPath).Target -ErrorAction SilentlyContinue
+} else { $null }
+if (-not $scriptDir) { $scriptDir = $PSScriptRoot }
+$configScript = Join-Path $scriptDir "..\..\config\setup-environment.ps1"
 if (Test-Path $configScript) {
     . $configScript -SkipValidation
 } else {
@@ -54,29 +53,20 @@ function Run-Command {
     Write-Host "  ► $Description" -ForegroundColor Cyan
     Write-Host "    $Command" -ForegroundColor Yellow
 
-    if (-not $DryRun) {
-        if ($WorkingDirectory) {
-            Push-Location $WorkingDirectory
-            Invoke-Expression $Command 2>&1 | ForEach-Object { Write-Host "      $_" }
-            Pop-Location
-        } else {
-            Invoke-Expression $Command 2>&1 | ForEach-Object { Write-Host "      $_" }
-        }
-        Write-Host "    [OK]" -ForegroundColor Green
+    if ($WorkingDirectory) {
+        Push-Location $WorkingDirectory
+        Invoke-Expression $Command 2>&1 | ForEach-Object { Write-Host "      $_" }
+        Pop-Location
     } else {
-        Write-Host "    [DRY RUN]" -ForegroundColor Magenta
+        Invoke-Expression $Command 2>&1 | ForEach-Object { Write-Host "      $_" }
     }
+    Write-Host "    [OK]" -ForegroundColor Green
     Write-Host ""
 }
 
 Write-Host ""
 Write-Host "SWI-Prolog Repository Sync" -ForegroundColor Cyan
 Write-Host "============================" -ForegroundColor Cyan
-if ($DryRun) {
-    Write-Host "MODE: DRY RUN (preview only)" -ForegroundColor Yellow
-} else {
-    Write-Host "MODE: EXECUTING" -ForegroundColor Red
-}
 Write-Host ""
 
 foreach ($repo in $repos) {
@@ -101,7 +91,3 @@ Write-Host "============================" -ForegroundColor Cyan
 Write-Host "Sync Complete!" -ForegroundColor Cyan
 Write-Host ""
 
-if ($DryRun) {
-    Write-Host "To execute, run:" -ForegroundColor Yellow
-    Write-Host "  .\resync-all-repos.ps1 -Execute" -ForegroundColor Yellow
-}

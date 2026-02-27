@@ -15,7 +15,7 @@ This documentation uses the following placeholders for paths. Replace them with 
 - `<YOUR_SOURCE_DIR>` - SWI-Prolog source directory (e.g., `C:\dev\swipl-devel`)
 - `<YOUR_GITHUB_USER>` - Your GitHub username (e.g., `johndoe`)
 
-These paths are configured automatically by running `scripts\setup-wizard.ps1`.
+These paths are configured automatically by running `.claude\skills\scripts\setup-wizard.ps1`.
 
 ## Available Operations
 

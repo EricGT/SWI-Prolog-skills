@@ -172,11 +172,11 @@ Write-Host "Building in: $env:SWIPL_SOURCE_DIR"
 
 ## Related Scripts
 
-After configuring, you can use these scripts (in parent directories):
+After configuring, you can use these scripts:
 
-- `..\..\scripts\setup-wizard.ps1` - Interactive first-time setup
-- `..\..\scripts\build\build-msvc.ps1` - Build SWI-Prolog
-- `..\..\scripts\pr\*.ps1` - PR workflow scripts
+- `..\scripts\setup-wizard.ps1` - Interactive first-time setup
+- `..\scripts\build\build-msvc.ps1` - Build SWI-Prolog
+- `..\scripts\pr\*.ps1` - PR workflow scripts
 
 ## Support
 

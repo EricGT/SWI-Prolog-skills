@@ -11,12 +11,6 @@
       "keywords": ["resync", "sync", "upstream", "fetch", "pull", "update", "master"],
       "parameters": [
         {
-          "name": "DryRun",
-          "type": "boolean",
-          "default": true,
-          "description": "Preview mode (true) or execute (false)"
-        },
-        {
           "name": "Verbose",
           "type": "switch",
           "default": false,
@@ -79,12 +73,6 @@
           "type": "string",
           "default": "${SWIPL_SOURCE_DIR}",
           "description": "Repository path (defaults to SWIPL_SOURCE_DIR environment variable)"
-        },
-        {
-          "name": "DryRun",
-          "type": "boolean",
-          "default": true,
-          "description": "Preview mode (true) or execute (false)"
         }
       ],
       "execution": "powershell",

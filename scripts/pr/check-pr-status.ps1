@@ -12,7 +12,12 @@ param(
 # Source environment configuration (must happen before any path usage)
 # Scripts are in: .claude\skills\scripts\pr\
 # Config is in:   .claude\skills\config\ (two levels up: ..\..\config\)
-$configScript = Join-Path $PSScriptRoot "..\..\config\setup-environment.ps1"
+# Resolve symlinks so $PSScriptRoot points to the real directory, not a symlink.
+$scriptDir = if ($PSCommandPath) {
+    Split-Path -Parent (Get-Item $PSCommandPath).Target -ErrorAction SilentlyContinue
+} else { $null }
+if (-not $scriptDir) { $scriptDir = $PSScriptRoot }
+$configScript = Join-Path $scriptDir "..\..\config\setup-environment.ps1"
 if (Test-Path $configScript) {
     . $configScript -SkipValidation
 } else {

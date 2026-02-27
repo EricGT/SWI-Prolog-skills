@@ -10,8 +10,6 @@
     Type of branch: fix, feature, refactor, test, docs
 .PARAMETER Repository
     Path to the repository (default: from SWIPL_SOURCE_DIR environment variable)
-.PARAMETER Execute
-    If present, actually executes commands. Default is dry-run (preview only).
 .EXAMPLE
     # Interactive mode - will suggest naming
     .\setup-new-branch.ps1
@@ -27,11 +25,8 @@ param(
     [string]$BranchName = "",
     [ValidateSet("fix", "feature", "refactor", "test", "docs")]
     [string]$BranchType = "fix",
-    [string]$Repository,
-    [switch]$Execute
+    [string]$Repository
 )
-
-$DryRun = -not $Execute
 
 $ErrorActionPreference = 'Continue'
 
@@ -41,7 +36,12 @@ $ErrorActionPreference = 'Continue'
 # Source environment configuration (must happen before any path usage)
 # Scripts are in: .claude\skills\scripts\pr\
 # Config is in:   .claude\skills\config\ (two levels up: ..\..\config\)
-$configScript = Join-Path $PSScriptRoot "..\..\config\setup-environment.ps1"
+# Resolve symlinks so $PSScriptRoot points to the real directory, not a symlink.
+$scriptDir = if ($PSCommandPath) {
+    Split-Path -Parent (Get-Item $PSCommandPath).Target -ErrorAction SilentlyContinue
+} else { $null }
+if (-not $scriptDir) { $scriptDir = $PSScriptRoot }
+$configScript = Join-Path $scriptDir "..\..\config\setup-environment.ps1"
 if (Test-Path $configScript) {
     . $configScript -SkipValidation
 } else {
@@ -102,14 +102,8 @@ function Run-Command {
 
     Write-Host "► $Description" -ForegroundColor Cyan
     Write-Host "  $Command" -ForegroundColor Yellow
-
-    if (-not $DryRun) {
-        Write-Host "  Executing..." -ForegroundColor Gray
-        Invoke-Expression $Command
-        Write-Host "  ✓ Done" -ForegroundColor Green
-    } else {
-        Write-Host "  [DRY RUN - not executed]" -ForegroundColor Magenta
-    }
+    Invoke-Expression $Command
+    Write-Host "  ✓ Done" -ForegroundColor Green
     Write-Host ""
 }
 
@@ -155,13 +149,6 @@ if ($BranchName -notmatch '^[a-z0-9\-]+$') {
 Write-Host "Branch name: $BranchName" -ForegroundColor Green
 Write-Host ""
 
-if ($DryRun) {
-    Write-Host "MODE: DRY RUN (preview only)" -ForegroundColor Yellow
-} else {
-    Write-Host "MODE: EXECUTING COMMANDS" -ForegroundColor Red
-}
-Write-Host ""
-
 Write-Host "Operations to perform:" -ForegroundColor Cyan
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
 Write-Host ""
@@ -182,32 +169,14 @@ Run-Command `
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 
-if ($DryRun) {
-    Write-Host "Branch ready to be created!" -ForegroundColor Green
-    Write-Host ""
-    Write-Host "Next steps:" -ForegroundColor Cyan
-    Write-Host "1. Run with -Execute to create the branch" -ForegroundColor Yellow
-    Write-Host "   .\setup-new-branch.ps1 -BranchName '$BranchName' -Execute" -ForegroundColor Yellow
-    Write-Host ""
-    Write-Host "2. Make your code changes" -ForegroundColor Yellow
-    Write-Host ""
-    Write-Host "3. Commit and push:" -ForegroundColor Yellow
-    Write-Host "   git add <files>" -ForegroundColor Gray
-    Write-Host "   git commit -m 'Fix: description'" -ForegroundColor Gray
-    Write-Host "   git push origin $BranchName" -ForegroundColor Gray
-    Write-Host ""
-    Write-Host "4. Create PR:" -ForegroundColor Yellow
-    Write-Host "   gh pr create --repo SWI-Prolog/<package> --head `$(`$env:GITHUB_USER):$BranchName" -ForegroundColor Gray
-} else {
-    Write-Host "Branch '$BranchName' created successfully!" -ForegroundColor Green
-    Write-Host ""
-    Write-Host "Next steps:" -ForegroundColor Cyan
-    Write-Host "1. Make your code changes" -ForegroundColor Yellow
-    Write-Host "2. Commit and push:" -ForegroundColor Yellow
-    Write-Host "   git add <files>" -ForegroundColor Gray
-    Write-Host "   git commit -m 'Fix: description'" -ForegroundColor Gray
-    Write-Host "   git push origin $BranchName" -ForegroundColor Gray
-    Write-Host "3. Create PR" -ForegroundColor Yellow
-}
+Write-Host "Branch '$BranchName' created successfully!" -ForegroundColor Green
+Write-Host ""
+Write-Host "Next steps:" -ForegroundColor Cyan
+Write-Host "1. Make your code changes" -ForegroundColor Yellow
+Write-Host "2. Commit and push:" -ForegroundColor Yellow
+Write-Host "   git add <files>" -ForegroundColor Gray
+Write-Host "   git commit -m 'Fix: description'" -ForegroundColor Gray
+Write-Host "   git push origin $BranchName" -ForegroundColor Gray
+Write-Host "3. Create PR" -ForegroundColor Yellow
 
 Write-Host "========================================" -ForegroundColor Cyan
