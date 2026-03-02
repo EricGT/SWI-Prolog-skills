@@ -39,6 +39,8 @@ $repos = @(
     @{ Name = "packages-nlp"; Path = "$sourceDir\packages\nlp" },
     @{ Name = "packages-semweb"; Path = "$sourceDir\packages\semweb" },
     @{ Name = "packages-xpce"; Path = "$sourceDir\packages\xpce" },
+    @{ Name = "rocksdb"; Path = "$sourceDir\packages\rocksdb" },
+    @{ Name = "rocks-predicates"; Path = "$sourceDir\packages\rocks-predicates" },
     @{ Name = "winlibedit"; Path = "$sourceDir\packages\libedit\libedit" },
     @{ Name = "distro-debian"; Path = "$sourceDir\debian" }
 )
